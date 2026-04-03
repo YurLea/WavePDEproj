@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Поле ввода</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<div class="task-block">
+  <div class="task-title">Постановка задачи</div>
+
+  <div class="formula">
+    \[
+    u_{tt} = a^2 u_{xx}, \qquad t > 0,\quad 0 < x < l
+    \]
+  </div>
+
+  <div class="formula">
+    \[
+    u(0, x) = \varphi(x)
+    \]
+  </div>
+
+  <div class="formula">
+    \[
+    u_t(0, x) = \psi(x)
+    \]
+  </div>
+
+  <div class="formula">
+    \[
+    u(t, 0) = 0
+    \]
+  </div>
+
+  <div class="formula">
+    \[
+    u_x(t, l) = 0
+    \]
+  </div>
+</div>
+<div class="initial-functions">
+  <div class="Phi-function-container">
+    <label class="phi-label" for="phi-input">&phi;(x) = </label>
+    <input type="text" id="phi-input" class="Phi-function" placeholder="Enter function">
+  </div>
+  <div class="Psi-function-container">
+    <label class="psi-label" for="psi-input">&psi;(x) = </label>
+    <input type="text" id="psi-input" class="Psi-function" placeholder="Enter function">
+  </div>
+</div>
+
+<div class="parameters-container">
+  <div class="a-parameter-container">
+    <label class="a-label" for="a-input">a=</label>
+    <input type="text" id="a-input" class="a-parameter" placeholder="Enter a">
+  </div>
+  <div class="l-parameter-container">
+    <label class="l-label" for="l-input">l=</label>
+    <input type="text" id="l-input" class="l-parameter" placeholder="Enter l">
+  </div>
+</div>
+
+<button class="solve-button">Solve</button>
+<button class="pause-button">Pause</button>
+<canvas id="string-canvas" width="900" height="300"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjs@12/lib/browser/math.js"></script>
+<script type="module" src="./app.js"></script>
+</body>
+</html>

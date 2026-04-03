@@ -1,0 +1,149 @@
+.parameters-container{
+    display: flex;
+    align-items: center;
+    gap: 370px;
+    margin-top: 10px;
+}
+
+.l-parameter-container,
+.a-parameter-container{
+    display: flex;
+    align-items: center;
+}
+
+.l-parameter,
+.a-parameter{
+    width: 80px;
+    padding: 4px;
+    font-size: 19px;
+    border: 2px solid black;
+    border-radius: 8px;
+    outline: none;
+    margin-left: 5px;
+}
+
+.l-label,
+.a-label{
+    font-size: 24px;
+    margin-right: 2px;
+}
+
+.initial-functions {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-top: 10px;
+}
+
+.Phi-function-container,
+.Psi-function-container {
+    display: flex;
+    align-items: center;
+}
+
+.Phi-function,
+.Psi-function {
+    width: 360px;
+    padding: 12px;
+    font-size: 19px;
+    border: 2px solid black;
+    border-radius: 8px;
+    outline: none;
+    margin-left: 5px;
+}
+
+.phi-label,
+.psi-label {
+    font-size: 24px;
+    margin-right: 2px;
+}
+
+.phi-function-button {
+    display: block;
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+.output-box {
+    display: block;
+    margin-top: 20px;
+    margin-left: 10px;
+    width: 360px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 40px;
+}
+
+.task-block {
+    max-width: 800px;
+    padding: 20px 30px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    background: #f9f9f9;
+}
+
+.task-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.formula {
+    margin: 12px 0;
+    font-size: 18px;
+}
+
+.solve-button {
+    padding: 10px 20px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    margin-top: 10px;
+}
+
+.solve-button:hover {
+    background-color: #1d4ed8;
+}
+
+.solve-button:active {
+    transform: scale(0.98);
+}
+
+.solve-button:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+}
+
+.pause-button {
+    padding: 10px 20px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    margin-top: 10px;
+}
+
+.pause-button:hover {
+    background-color: #1d4ed8;
+}
+
+.pause-button:active {
+    transform: scale(0.98);
+}
+
+.pause-button:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+}
