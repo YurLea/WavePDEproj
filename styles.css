@@ -147,3 +147,10 @@ body {
     background-color: #94a3b8;
     cursor: not-allowed;
 }
+
+.canvas-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 20px; /* расстояние между canvas */
+    align-items: flex-start;
+}
