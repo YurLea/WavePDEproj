@@ -3,19 +3,22 @@ export class NumericSolver {
     this.a = a;
     this.l = l;
 
-    this.dt = 0.05;
-    this.dx = 0.05;
+    this.dx = 0.01;
+    this.dt = 0.9 * this.dx / this.a; // условие устойчивости
 
     this.t = 0;
 
     this.n = Math.floor(this.l / this.dx) + 1;
-    this.r = (this.a * this.a * this.dt * this.dt) / (this.dx * this.dx);
+    this.lambda = (this.a * this.dt) / this.dx;
+    this.r = this.lambda * this.lambda;
 
     this.phiExpr = math.compile(phiFunction);
     this.psiExpr = math.compile(psiFunction);
 
-    this.uPrev = new Array(this.n).fill(0);      // u^0
-    this.currLayer = new Array(this.n).fill(0);  // u^1
+    this.uPrev = new Array(this.n).fill(0);     // u^(n-1)
+    this.currLayer = new Array(this.n).fill(0); // u^n
+
+    this.isFirstStep = true;
 
     this.initialize();
   }
@@ -28,64 +31,66 @@ export class NumericSolver {
     return this.psiExpr.evaluate({ x });
   }
 
-  initialize() {
-    // Проверка устойчивости
-    if (this.r > 1) {
-      console.warn(
-        `Explicit scheme may be unstable: r = ${this.r} > 1. ` +
-        `Need a*dt/dx <= 1.`
-      );
-    }
-
-    // Начальный слой u^0
-    for (let i = 0; i < this.n; i++) {
-      let x = i * this.dx;
-      if (x > this.l) x = this.l;
-      this.uPrev[i] = this.phi(x);
-    }
-
-    this.applyBorder(this.uPrev);
-
-    // Первый слой u^1
-    this.currLayer[0] = 0;
-
-    for (let i = 1; i < this.n - 1; i++) {
-      let x = i * this.dx;
-      if (x > this.l) x = this.l;
-
-      const laplacian =
-        this.uPrev[i + 1] - 2 * this.uPrev[i] + this.uPrev[i - 1];
-
-      this.currLayer[i] =
-        this.uPrev[i] +
-        this.dt * this.psi(x) +
-        0.5 * this.r * laplacian;
-    }
-
-    this.currLayer[this.n - 1] = this.currLayer[this.n - 2];
-
-    this.t = this.dt;
-  }
-
   applyBorder(layer) {
     layer[0] = 0;
     layer[this.n - 1] = layer[this.n - 2];
   }
 
-  makeTimeStep() {
-    const nextLayer = new Array(this.n).fill(0);
+  initialize() {
+    for (let i = 0; i < this.n; i++) {
+      let x = i * this.dx;
+      if (x > this.l) x = this.l;
+      this.currLayer[i] = this.phi(x);
+    }
 
+    this.applyBorder(this.currLayer);
+
+    // на t = 0
+    this.uPrev = [...this.currLayer];
+  }
+
+  buildFirstLayer() {
+    const firstLayer = new Array(this.n).fill(0);
+    firstLayer[0] = 0;
+
+    for (let i = 1; i < this.n - 1; i++) {
+      let x = i * this.dx;
+      if (x > this.l) x = this.l;
+
+      const secondDiff =
+        this.currLayer[i + 1] - 2 * this.currLayer[i] + this.currLayer[i - 1];
+
+      firstLayer[i] =
+        this.currLayer[i] +
+        this.dt * this.psi(x) +
+        0.5 * this.r * secondDiff;
+    }
+
+    firstLayer[this.n - 1] = firstLayer[this.n - 2];
+
+    this.uPrev = [...this.currLayer];
+    this.currLayer = firstLayer;
+    this.t += this.dt;
+    this.isFirstStep = false;
+  }
+
+  makeTimeStep() {
+    if (this.isFirstStep) {
+      this.buildFirstLayer();
+      return;
+    }
+
+    const nextLayer = new Array(this.n).fill(0);
     nextLayer[0] = 0;
 
     for (let i = 1; i < this.n - 1; i++) {
+      const secondDiff =
+        this.currLayer[i + 1] - 2 * this.currLayer[i] + this.currLayer[i - 1];
+
       nextLayer[i] =
         2 * this.currLayer[i] -
         this.uPrev[i] +
-        this.r * (
-          this.currLayer[i + 1] -
-          2 * this.currLayer[i] +
-          this.currLayer[i - 1]
-        );
+        this.r * secondDiff;
     }
 
     nextLayer[this.n - 1] = nextLayer[this.n - 2];

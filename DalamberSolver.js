@@ -2,9 +2,9 @@ export class AnalyticalSolver {
   constructor(phiFunction, psiFunction, a, l) {
     this.a = a;
     this.l = l;
-    this.dt = 0.05;
     this.t = 0;
-    this.dx = 0.05;
+    this.dx = 0.01;
+    this.dt = 0.9 * this.dx / this.a;
     this.n = Math.floor(this.l / this.dx) + 1;
     this.phiExpr = math.compile(phiFunction);
     this.psiExpr = math.compile(psiFunction);

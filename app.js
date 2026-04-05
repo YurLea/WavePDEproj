@@ -40,6 +40,7 @@ solveButton.addEventListener('click', function () {
     }
 
     currentAnalyticalSolver = new AnalyticalSolver(phi, psi, a, l);
+    //currentAnalyticalSolver.makeTimeStep();
     currentNumericSolver = new NumericSolver(phi, psi, a, l);
 
     isPaused = false;
@@ -96,8 +97,8 @@ function animate(analyticalSolver, numericSolver) {
 
       drawSolver(
         numericSolver,
-        numericSolver,
         numericCanvas,
+        numericCtx,
         numericCenterY,
         numericYScale,
         '#dc2626',
