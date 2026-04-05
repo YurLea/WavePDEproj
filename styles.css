@@ -154,3 +154,18 @@ body {
     gap: 20px; /* расстояние между canvas */
     align-items: flex-start;
 }
+
+.User-function {
+    width: 360px;
+    padding: 12px;
+    font-size: 19px;
+    border: 2px solid black;
+    border-radius: 8px;
+    outline: none;
+    margin-left: 5px;
+}
+
+.user-solution-label {
+    font-size: 24px;
+    margin-right: 2px;
+}

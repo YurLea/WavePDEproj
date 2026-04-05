@@ -3,7 +3,7 @@ export class AnalyticalSolver {
     this.a = a;
     this.l = l;
     this.t = 0;
-    this.dx = 0.01;
+    this.dx = 0.02;
     this.dt = 0.9 * this.dx / this.a;
     this.n = Math.floor(this.l / this.dx) + 1;
     this.phiExpr = math.compile(phiFunction);

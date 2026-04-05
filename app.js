@@ -1,4 +1,4 @@
-import { AnalyticalSolver } from './DalamberSolver.js';
+import { UserFormulaSolver } from './UserFormulaSolver.js';
 import { NumericSolver } from './NumericSolver.js';
 
 const phiInputField = document.querySelector('.Phi-function');
@@ -7,6 +7,7 @@ const aInputField = document.querySelector('.a-parameter');
 const lInputField = document.querySelector('.l-parameter');
 const solveButton = document.querySelector('.solve-button');
 const pauseButton = document.querySelector('.pause-button');
+const userSolutionInputField = document.querySelector('.User-function');
 
 const analyticalCanvas = document.getElementById('string-canvas');
 const analyticalCtx = analyticalCanvas.getContext('2d');
@@ -26,6 +27,7 @@ solveButton.addEventListener('click', function () {
   try {
     const phi = phiInputField.value.trim();
     const psi = psiInputField.value.trim();
+    const u = userSolutionInputField.value.trim();
     const a = Number(aInputField.value);
     const l = Number(lInputField.value);
 
@@ -39,9 +41,13 @@ solveButton.addEventListener('click', function () {
       return;
     }
 
-    currentAnalyticalSolver = new AnalyticalSolver(phi, psi, a, l);
     //currentAnalyticalSolver.makeTimeStep();
     currentNumericSolver = new NumericSolver(phi, psi, a, l);
+    currentAnalyticalSolver = new UserFormulaSolver(u,
+      currentNumericSolver.dt,
+      currentNumericSolver.dx,
+      l,
+      currentNumericSolver.n);
 
     isPaused = false;
     pauseButton.textContent = 'Pause';
@@ -115,7 +121,7 @@ function animate(analyticalSolver, numericSolver) {
       console.error(error);
       cancelAnimationFrame(animationId);
       animationId = null;
-      alert('Ошибк�� во время анимации. Проверьте введённые функции.');
+      alert('Ошибка во время анимации. Проверьте введённые функции.');
     }
   }
 
