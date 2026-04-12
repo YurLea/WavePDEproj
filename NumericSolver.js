@@ -4,7 +4,7 @@ export class NumericSolver {
     this.l = l;
 
     this.dx = 0.005;
-    this.dt = 0.9 * this.dx / this.a; // условие устойчивости
+    this.dt = 0.5 * this.dx / this.a; // условие устойчивости
 
     this.t = 0;
 

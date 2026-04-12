@@ -1,5 +1,6 @@
 import { UserFormulaSolver } from './UserFormulaSolver.js';
 import { NumericSolver } from './NumericSolver.js';
+import { maxAbsDeviation, meanAbsDeviation } from './DeviationFunctions.js';
 
 const phiInputField = document.querySelector('.Phi-function');
 const psiInputField = document.querySelector('.Psi-function');
@@ -8,6 +9,8 @@ const lInputField = document.querySelector('.l-parameter');
 const solveButton = document.querySelector('.solve-button');
 const pauseButton = document.querySelector('.pause-button');
 const userSolutionInputField = document.querySelector('.User-function');
+const maxDevEl = document.getElementById('max-dev');
+const meanDevEl = document.getElementById('mean-dev');
 
 const analyticalCanvas = document.getElementById('string-canvas');
 const analyticalCtx = analyticalCanvas.getContext('2d');
@@ -91,6 +94,12 @@ function animate(analyticalSolver, numericSolver) {
 
   function frame() {
     try {
+      const [maxDev, maxCoord] = maxAbsDeviation(numericSolver, analyticalSolver);
+      const meanDev = meanAbsDeviation(numericSolver, analyticalSolver);
+
+      maxDevEl.textContent = maxDev.toFixed(6);
+      meanDevEl.textContent = meanDev.toFixed(6);
+
       drawSolver(
         analyticalSolver,
         analyticalCanvas,
@@ -98,7 +107,8 @@ function animate(analyticalSolver, numericSolver) {
         analyticalCenterY,
         analyticalYScale,
         '#2563eb',
-        'Analytical'
+        'Analytical',
+        maxCoord
       );
 
       drawSolver(
@@ -108,7 +118,8 @@ function animate(analyticalSolver, numericSolver) {
         numericCenterY,
         numericYScale,
         '#dc2626',
-        'Numeric'
+        'Numeric',
+        maxCoord
       );
 
       if (!isPaused) {
@@ -128,7 +139,7 @@ function animate(analyticalSolver, numericSolver) {
   frame();
 }
 
-function drawSolver(solver, canvas, ctx, centerY, yScale, color, title) {
+function drawSolver(solver, canvas, ctx, centerY, yScale, color, title, maxCoord = null) {
   const values = solver.u;
   const l = solver.l;
 
@@ -162,6 +173,53 @@ function drawSolver(solver, canvas, ctx, centerY, yScale, color, title) {
   }
 
   ctx.stroke();
+
+  // подсветка точки maxCoord
+  if (Number.isFinite(maxCoord)) {
+    const xPhysical = Math.max(0, Math.min(l, maxCoord * solver.dx));
+    const canvasX = (xPhysical / l) * canvas.width;
+
+    let valueAtX;
+    if (typeof solver.getUAt === 'function') {
+      valueAtX = solver.getUAt(xPhysical);
+    } else if (typeof solver.uAtX === 'function') {
+      valueAtX = solver.uAtX(xPhysical);
+    } else {
+      const idx = Math.max(0, maxCoord);
+      valueAtX = values[idx];
+    }
+
+    const canvasY = centerY - valueAtX * yScale;
+
+    // вертикальная линия
+    ctx.save();
+    ctx.beginPath();
+    ctx.strokeStyle = '#f59e0b';
+    ctx.setLineDash([6, 4]);
+    ctx.lineWidth = 1.5;
+    ctx.moveTo(canvasX, 0);
+    ctx.lineTo(canvasX, canvas.height);
+    ctx.stroke();
+    ctx.restore();
+
+    // точка
+    ctx.save();
+    ctx.beginPath();
+    ctx.fillStyle = '#f59e0b';
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.arc(canvasX, canvasY, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    // подпись
+    ctx.save();
+    ctx.fillStyle = '#f59e0b';
+    ctx.font = '14px sans-serif';
+    ctx.fillText('max Δ', Math.min(canvasX + 8, canvas.width - 50), Math.max(canvasY - 10, 16));
+    ctx.restore();
+  }
 
   // подписи
   ctx.fillStyle = '#111827';
