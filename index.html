@@ -127,6 +127,38 @@
   <div>Среднее отклонение: <span id="mean-dev">0</span></div>
 </div>
 
+<div class="deviation-formulas">
+  <div class="deviation-formulas-title">Формулы расчёта отклонения</div>
+
+  <div class="formula">
+    \[
+    S = \max_{0 \le i < n}\bigl(\,|u_1(i)|,\ |u_2(i)|\,\bigr)
+    \]
+  </div>
+
+  <div class="formula">
+    \[
+    \delta_i = \frac{|u_1(i) - u_2(i)|}{S + \varepsilon}
+    \]
+  </div>
+
+  <div class="formula">
+    \[
+    \delta_{\max} = \max_{0 \le i < n} \delta_i
+    \]
+  </div>
+
+  <div class="formula">
+    \[
+    \delta_{\text{mean}} = \frac{1}{n}\sum_{i=0}^{n-1}\delta_i
+    \]
+  </div>
+
+  <div class="deviation-note">
+    где \( \varepsilon = 10^{-12} \) — малое число, чтобы избежать деления на ноль.
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/mathjs@12/lib/browser/math.js"></script>
 <script type="module" src="./app.js"></script>
 </body>

@@ -441,3 +441,27 @@ canvas {
         width: 100%;
     }
 }
+
+.deviation-formulas {
+    width: min(1050px, 100%);
+    margin: 14px auto 0;
+    padding: 18px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+}
+
+.deviation-formulas-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: #0f172a;
+}
+
+.deviation-note {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--muted);
+}

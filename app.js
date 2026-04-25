@@ -1,6 +1,6 @@
 import { UserFormulaSolver } from './UserFormulaSolver.js';
 import { NumericSolver } from './NumericSolver.js';
-import { maxAbsDeviation, meanAbsDeviation } from './DeviationFunctions.js';
+import { maxNormalizedDeviation, meanNormalizedDeviation } from './DeviationFunctions.js';
 import { create, all } from 'https://cdn.jsdelivr.net/npm/mathjs@12.4.2/+esm';
 
 const math = create(all, {});
@@ -147,8 +147,8 @@ function animate(analyticalSolver, numericSolver) {
 
   function frame() {
     try {
-      const [maxDev, maxCoord] = maxAbsDeviation(numericSolver, analyticalSolver);
-      const meanDev = meanAbsDeviation(numericSolver, analyticalSolver);
+      const [maxDev, maxCoord] = maxNormalizedDeviation(numericSolver, analyticalSolver);
+      const meanDev = meanNormalizedDeviation(numericSolver, analyticalSolver);
 
       maxDevEl.textContent = maxDev.toFixed(6);
       meanDevEl.textContent = meanDev.toFixed(6);
