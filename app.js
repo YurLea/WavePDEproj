@@ -1,6 +1,9 @@
 import { UserFormulaSolver } from './UserFormulaSolver.js';
 import { NumericSolver } from './NumericSolver.js';
 import { maxAbsDeviation, meanAbsDeviation } from './DeviationFunctions.js';
+import { create, all } from 'https://cdn.jsdelivr.net/npm/mathjs@12.4.2/+esm';
+
+const math = create(all, {});
 
 const phiInputField = document.querySelector('.Phi-function');
 const psiInputField = document.querySelector('.Psi-function');
@@ -8,6 +11,7 @@ const aInputField = document.querySelector('.a-parameter');
 const lInputField = document.querySelector('.l-parameter');
 const solveButton = document.querySelector('.solve-button');
 const pauseButton = document.querySelector('.pause-button');
+const deviationButton = document.querySelector('.deviation-button');
 const userSolutionInputField = document.querySelector('.User-function');
 const maxDevEl = document.getElementById('max-dev');
 const meanDevEl = document.getElementById('mean-dev');
@@ -25,14 +29,55 @@ let animationId = null;
 let currentAnalyticalSolver = null;
 let currentNumericSolver = null;
 let isPaused = false;
+let showDeviationPoint = false;
+
+document.querySelectorAll('.math-help-row').forEach((row) => {
+  const btn = row.querySelector('.help-btn');
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+
+    const isOpen = row.classList.contains('open');
+
+    document.querySelectorAll('.math-help-row.open').forEach((other) => {
+      other.classList.remove('open');
+      other.querySelector('.help-btn')?.setAttribute('aria-expanded', 'false');
+    });
+
+    if (!isOpen) {
+      row.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+});
+
+document.addEventListener('click', () => {
+  document.querySelectorAll('.math-help-row.open').forEach((row) => {
+    row.classList.remove('open');
+    row.querySelector('.help-btn')?.setAttribute('aria-expanded', 'false');
+  });
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.math-help-row.open').forEach((row) => {
+      row.classList.remove('open');
+      row.querySelector('.help-btn')?.setAttribute('aria-expanded', 'false');
+    });
+  }
+});
+
+function toNumber(value) {
+  return Number(math.evaluate(value));
+}
 
 solveButton.addEventListener('click', function () {
   try {
     const phi = phiInputField.value.trim();
     const psi = psiInputField.value.trim();
     const u = userSolutionInputField.value.trim();
-    const a = Number(aInputField.value);
-    const l = Number(lInputField.value);
+    const a = toNumber(aInputField.value);
+    const l = toNumber(lInputField.value);
 
     if (!phi || !psi) {
       alert('Введите функции φ(x) и ψ(x).');
@@ -70,6 +115,14 @@ pauseButton.addEventListener('click', function () {
   isPaused = !isPaused;
   pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
 });
+
+deviationButton.addEventListener('click', function () {
+  if (!currentAnalyticalSolver || !currentNumericSolver) {
+    return;
+  }
+
+  showDeviationPoint = !showDeviationPoint;
+})
 
 function animate(analyticalSolver, numericSolver) {
   if (animationId !== null) {
@@ -175,7 +228,7 @@ function drawSolver(solver, canvas, ctx, centerY, yScale, color, title, maxCoord
   ctx.stroke();
 
   // подсветка точки maxCoord
-  if (Number.isFinite(maxCoord)) {
+  if (showDeviationPoint && Number.isFinite(maxCoord)) {
     const xPhysical = Math.max(0, Math.min(l, maxCoord * solver.dx));
     const canvasX = (xPhysical / l) * canvas.width;
 

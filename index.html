@@ -49,10 +49,29 @@
   </div>
 </div>
 <div class="initial-functions">
+  <div class="math-help-row">
+    <button type="button" class="help-btn" aria-expanded="false">
+      Памятка ввода функций
+    </button>
+
+    <div class="help-popover">
+      <div class="help-title">Как вводить функции</div>
+      <ul>
+        <li><code>sin(x)</code>, <code>cos(x)</code>, <code>tan(x)</code></li>
+        <li><code>sqrt(x)</code>, <code>abs(x)</code>, <code>exp(x)</code></li>
+        <li><code>pi</code>, <code>e</code>, <code>x^2</code>, <code>t*x</code></li>
+      </ul>
+      <div class="help-note">
+        Тригонометрия — в радианах.
+      </div>
+    </div>
+  </div>
+
   <div class="Phi-function-container">
     <label class="phi-label" for="phi-input">&phi;(x) = </label>
     <input type="text" id="phi-input" class="Phi-function" placeholder="Enter function">
   </div>
+
   <div class="Psi-function-container">
     <label class="psi-label" for="psi-input">&psi;(x) = </label>
     <input type="text" id="psi-input" class="Psi-function" placeholder="Enter function">
@@ -60,10 +79,28 @@
 </div>
 
 <div class="parameters-container">
+  <div class="math-help-row">
+    <button type="button" class="help-btn" aria-expanded="false">
+      Как вводить a и l
+    </button>
+
+    <div class="help-popover">
+      <div class="help-title">Числовые выражения</div>
+      <ul>
+        <li><code>5*pi</code></li>
+        <li><code>sqrt(5)</code></li>
+        <li><code>2^3</code></li>
+        <li><code>1/3</code></li>
+        <li><code>pi/2</code></li>
+      </ul>
+    </div>
+  </div>
+
   <div class="a-parameter-container">
     <label class="a-label" for="a-input">a=</label>
     <input type="text" id="a-input" class="a-parameter" placeholder="Enter a">
   </div>
+
   <div class="l-parameter-container">
     <label class="l-label" for="l-input">l=</label>
     <input type="text" id="l-input" class="l-parameter" placeholder="Enter l">
@@ -78,6 +115,7 @@
 <div class="controls">
   <button class="solve-button">Solve</button>
   <button class="pause-button">Pause</button>
+  <button class="deviation-button">On/Off deviation point</button>
 </div>
 <div class="canvas-wrapper">
   <canvas id="string-canvas" width="900" height="300"></canvas>
