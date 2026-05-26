@@ -4,7 +4,7 @@ export class NumericSolver {
     this.l = l;
 
     this.dx = 0.005;
-    this.dt = 0.5 * this.dx / this.a; // условие устойчивости
+    this.dt = (0.5 * this.dx) / this.a;
 
     this.t = 0;
 
@@ -15,98 +15,77 @@ export class NumericSolver {
     this.phiExpr = math.compile(phiFunction);
     this.psiExpr = math.compile(psiFunction);
 
-    this.uPrev = new Array(this.n).fill(0);     // u^(n-1)
-    this.currLayer = new Array(this.n).fill(0); // u^n
+    this.layer1 = new Array(this.n); // u^(n-1)
+    this.layer2 = new Array(this.n); // u^n
+    this.layer3 = new Array(this.n); // u^(n+1) — буфер
 
-    this.isFirstStep = true;
+    this.phiValues = new Array(this.n);
+    this.psiValues = new Array(this.n);
+    for (let i = 0; i < this.n; i++) {
+      let x = i * this.dx;
+      if (x > this.l) x = this.l;
+      this.phiValues[i] = this.phiExpr.evaluate({ x });
+      this.psiValues[i] = this.psiExpr.evaluate({ x });
+    }
 
     this.initialize();
   }
 
-  phi(x) {
-    return this.phiExpr.evaluate({ x });
-  }
-
-  psi(x) {
-    return this.psiExpr.evaluate({ x });
-  }
-
-  applyBorder(layer) {
-    layer[0] = 0;
-    layer[this.n - 1] = layer[this.n - 2];
-  }
-
   initialize() {
     for (let i = 0; i < this.n; i++) {
-      let x = i * this.dx;
-      if (x > this.l) x = this.l;
-      this.currLayer[i] = this.phi(x);
+      this.layer2[i] = this.phiValues[i];
     }
+    this.layer2[0] = 0;
+    this.layer2[this.n - 1] = this.layer2[this.n - 2];
 
-    this.applyBorder(this.currLayer);
-
-    // на t = 0
-    this.uPrev = [...this.currLayer];
-  }
-
-  buildFirstLayer() {
-    const firstLayer = new Array(this.n).fill(0);
-    firstLayer[0] = 0;
+    this.layer3[0] = 0;
 
     for (let i = 1; i < this.n - 1; i++) {
-      let x = i * this.dx;
-      if (x > this.l) x = this.l;
-
       const secondDiff =
-        this.currLayer[i + 1] - 2 * this.currLayer[i] + this.currLayer[i - 1];
+        this.layer2[i + 1] - 2 * this.layer2[i] + this.layer2[i - 1];
 
-      firstLayer[i] =
-        this.currLayer[i] +
-        this.dt * this.psi(x) +
+      this.layer3[i] =
+        this.layer2[i] +
+        this.dt * this.psiValues[i] +
         0.5 * this.r * secondDiff;
     }
 
-    firstLayer[this.n - 1] = firstLayer[this.n - 2];
+    this.layer3[this.n - 1] = this.layer3[this.n - 2];
 
-    this.uPrev = [...this.currLayer];
-    this.currLayer = firstLayer;
+    this.layer1 = this.layer2;
+    this.layer2 = this.layer3;
+    this.layer3 = new Array(this.n);
     this.t += this.dt;
-    this.isFirstStep = false;
   }
 
   makeTimeStep() {
-    if (this.isFirstStep) {
-      this.buildFirstLayer();
-      return;
-    }
-
-    const nextLayer = new Array(this.n).fill(0);
-    nextLayer[0] = 0;
+    this.layer3[0] = 0;
 
     for (let i = 1; i < this.n - 1; i++) {
       const secondDiff =
-        this.currLayer[i + 1] - 2 * this.currLayer[i] + this.currLayer[i - 1];
+        this.layer2[i + 1] - 2 * this.layer2[i] + this.layer2[i - 1];
 
-      nextLayer[i] =
-        2 * this.currLayer[i] -
-        this.uPrev[i] +
-        this.r * secondDiff;
+      this.layer3[i] =
+        2 * this.layer2[i] - this.layer1[i] + this.r * secondDiff;
     }
 
-    nextLayer[this.n - 1] = nextLayer[this.n - 2];
+    this.layer3[this.n - 1] = this.layer3[this.n - 2];
 
-    this.uPrev = [...this.currLayer];
-    this.currLayer = nextLayer;
+    const tmp = this.layer1;
+    this.layer1 = this.layer2;
+    this.layer2 = this.layer3;
+    this.layer3 = tmp;
+
     this.t += this.dt;
   }
 
   getUAt(x) {
     const i = Math.round(x / this.dx);
     const idx = Math.max(0, Math.min(this.n - 1, i));
-    return this.currLayer[idx];
+    return this.layer2[idx];
   }
 
   get u() {
-    return [...this.currLayer];
+    return [...this.layer2];
   }
 }
